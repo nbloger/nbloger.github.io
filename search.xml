@@ -60,7 +60,7 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br></pre></td></tr></table></figure>
 
 <h2 id="安装常用应用"><a href="#安装常用应用" class="headerlink" title="安装常用应用"></a>安装常用应用</h2><p>使用如下命令安装应用：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install build-essential manpages-dev git cmake make vim gdb adb valgrind wget telnet nasm tcpdump git curl net-tools bash-completion -y</span><br><span class="line"><span class="built_in">sudo</span> apt upgrade</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install build-essential manpages-dev git cmake make vim gdb adb valgrind wget telnet nasm tcpdump git curl net-tools bash-completion -y</span><br><span class="line"><span class="built_in">sudo</span> apt install bochs bochs-x pulseaudio pavucontrol -y</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;pulseaudio --start 2&gt; /dev/null&quot;</span> &gt;&gt; ~/.bashrc</span><br><span class="line">pulseaudio --start</span><br><span class="line"><span class="built_in">sudo</span> apt upgrade</span><br></pre></td></tr></table></figure>
 
 <h2 id="配置自动补全"><a href="#配置自动补全" class="headerlink" title="配置自动补全"></a>配置自动补全</h2><p>在<code>~/.bashrc</code>结尾添加：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">. /etc/bash_completion</span><br></pre></td></tr></table></figure>
