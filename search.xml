@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Windows 10安装WSL2并配置图形环境</title>
+    <url>/2025/02/23/0/</url>
+    <content><![CDATA[<h2 id="启用相关特性"><a href="#启用相关特性" class="headerlink" title="启用相关特性"></a>启用相关特性</h2><p>以管理员运行CMD，输入：</p>
+<figure class="highlight bat"><table><tr><td class="code"><pre><span class="line">dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart</span><br><span class="line">dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart</span><br><span class="line">Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -NoRestart</span><br></pre></td></tr></table></figure>
+
+<p>之后重启Windows</p>
+<h2 id="安装WSL2-Debian"><a href="#安装WSL2-Debian" class="headerlink" title="安装WSL2 Debian"></a>安装WSL2 Debian</h2><p>以管理员运行CMD，先测试网络是否联通：</p>
+<figure class="highlight bat"><table><tr><td class="code"><pre><span class="line">wsl.exe --list --online</span><br></pre></td></tr></table></figure>
+
+<p>若返回<code>0x80072ee7</code>错误码则说明无法访问<code>raw.githubusercontent.com</code>，解决方案参考<a href="/2025/02/23/1">这篇博客</a>。</p>
+<p>确定网络联通后，运行如下命令：</p>
+<figure class="highlight bat"><table><tr><td class="code"><pre><span class="line">wsl.exe --install --no-distribution</span><br></pre></td></tr></table></figure>
+
+<p>之后重启Windows。在系统启动后，以管理员运行CMD，运行如下命令即可安装。</p>
+<figure class="highlight bat"><table><tr><td class="code"><pre><span class="line">wsl.exe --<span class="built_in">set</span>-default-version <span class="number">2</span></span><br><span class="line">wsl.exe --<span class="built_in">set</span>-default Debian</span><br><span class="line">wsl.exe --install --distribution Debian</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ol>
+<li><p><a href="https://www.omgubuntu.co.uk/how-to-install-wsl2-on-windows-10">How to Install WSL 2 on Windows 10 (Updated)</a></p>
+</li>
+<li><p><a href="https://learn.microsoft.com/zh-cn/windows/wsl/install">如何使用 WSL 在 Windows 上安装 Linux</a></p>
+</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>杂项</tag>
+        <tag>环境配置</tag>
+        <tag>Windows 10</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>解决 raw.githubusercontent.com 无法访问的问题</title>
+    <url>/2025/02/23/1/</url>
+    <content><![CDATA[<p>通常国内因DNS污染问题无法访问<code>raw.githubusercontent.com</code>，解决办法为修改<code>hosts</code>文件。</p>
+<ol>
+<li>使用<a href="https://ipaddress.com/">IPAddress</a>或其他类似网站查询<code>raw.githubusercontent.com</code>的IP，手动进行添加。</li>
+<li>参考<a href="https://github.com/521xueweihan/GitHub520">GitHub520</a>，手动更新hosts。</li>
+<li>参考<a href="https://github.com/521xueweihan/GitHub520">GitHub520</a>，使用<code>switchHosts</code>进行<code>hosts</code>管理。</li>
+</ol>
+<p><code>hosts</code>文件路径通常如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Windows</span><br><span class="line">C:\Windows\System32\drivers\etc\hosts</span><br><span class="line"></span><br><span class="line"># Linux</span><br><span class="line">/etc/hosts</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>杂项</tag>
+        <tag>环境配置</tag>
+        <tag>Github</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>WSL2环境配置</title>
+    <url>/2025/02/23/2/</url>
+    <content><![CDATA[<h2 id="设置APT镜像"><a href="#设置APT镜像" class="headerlink" title="设置APT镜像"></a>设置APT镜像</h2><p>因为需要配置https源，这需要安装证书认证工具：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install ca-certificates -y</span><br></pre></td></tr></table></figure>
+
+<p>之后修改<code>/etc/apt/sources.list</code>，为其配置阿里云源：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deb https://mirrors.aliyun.com/debian/ bookworm main non-free non-free-firmware contrib</span><br><span class="line">deb-src https://mirrors.aliyun.com/debian/ bookworm main non-free non-free-firmware contrib</span><br><span class="line"></span><br><span class="line">deb https://mirrors.aliyun.com/debian-security/ bookworm-security main</span><br><span class="line">deb-src https://mirrors.aliyun.com/debian-security/ bookworm-security main</span><br><span class="line"></span><br><span class="line">deb https://mirrors.aliyun.com/debian/ bookworm-updates main non-free non-free-firmware contrib</span><br><span class="line">deb-src https://mirrors.aliyun.com/debian/ bookworm-updates main non-free non-free-firmware contrib</span><br><span class="line"></span><br><span class="line">deb https://mirrors.aliyun.com/debian/ bookworm-backports main non-free non-free-firmware contrib</span><br><span class="line">deb-src https://mirrors.aliyun.com/debian/ bookworm-backports main non-free non-free-firmware contrib</span><br></pre></td></tr></table></figure>
+
+<p>随后更新软件源缓存：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装常用应用"><a href="#安装常用应用" class="headerlink" title="安装常用应用"></a>安装常用应用</h2><p>使用如下命令安装应用：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install build-essential manpages-dev git cmake make vim gdb adb valgrind wget telnet nasm tcpdump git curl net-tools bash-completion -y</span><br><span class="line"><span class="built_in">sudo</span> apt install bochs bochs-x pulseaudio pavucontrol -y</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;pulseaudio --start 2&gt; /dev/null&quot;</span> &gt;&gt; ~/.bashrc</span><br><span class="line">pulseaudio --start</span><br><span class="line"><span class="built_in">sudo</span> apt upgrade</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置自动补全"><a href="#配置自动补全" class="headerlink" title="配置自动补全"></a>配置自动补全</h2><p>在<code>~/.bashrc</code>结尾添加：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">. /etc/bash_completion</span><br></pre></td></tr></table></figure>
+
+<h2 id="设置vim禁用鼠标"><a href="#设置vim禁用鼠标" class="headerlink" title="设置vim禁用鼠标"></a>设置vim禁用鼠标</h2><p>在<code>vim</code>编辑界面中输入<code>scriptnames</code>，获得配置文件列表。</p>
+<p>在所有包含<code>set mouse</code>的文件末尾添加<code>set mouse</code>。</p>
+]]></content>
+      <tags>
+        <tag>杂项</tag>
+        <tag>环境配置</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>WSL2安装并配置HEXO</title>
+    <url>/2025/02/23/4/</url>
+    <content><![CDATA[<h2 id="安装HEXO并设置Github托管"><a href="#安装HEXO并设置Github托管" class="headerlink" title="安装HEXO并设置Github托管"></a>安装HEXO并设置Github托管</h2><h3 id="安装HEXO"><a href="#安装HEXO" class="headerlink" title="安装HEXO"></a>安装HEXO</h3><p>运行如下命令，运行前请确保能够访问<code>raw.githubusercontent.com</code>，解决方法详见<a href="/2025/02/23/1">这篇博客</a>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install curl -y</span><br><span class="line">curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash</span><br><span class="line"><span class="built_in">export</span> NVM_NPM_ORG_MIRROR=https://npmmirror.com/mirrors/npm/</span><br><span class="line"><span class="built_in">export</span> NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node/</span><br><span class="line">nvm install stable</span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmmirror.com</span><br><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
+
+<h3 id="设置GitHub免密登录"><a href="#设置GitHub免密登录" class="headerlink" title="设置GitHub免密登录"></a>设置GitHub免密登录</h3><p>运行如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install git -y</span><br><span class="line">git config --global user.name &lt;user_name&gt;</span><br><span class="line">git config --global user.email &lt;user_email&gt;</span><br><span class="line">ssh-keygen -t rsa -C &lt;user_email&gt;</span><br></pre></td></tr></table></figure>
+
+<p>将<code>cat ~/.ssh/id_rsa.pub</code>的输出添加到GitHub中，具体位置为：<code>头像-Setting-SSH And GPG keys-New SSH Keys</code>。</p>
+<p>运行<code>ssh -T git@github.com</code>，输入<code>yes</code>添加服务器。</p>
+<h3 id="设置GitHub托管"><a href="#设置GitHub托管" class="headerlink" title="设置GitHub托管"></a>设置GitHub托管</h3><p>在GitHub新建仓库，要求仓库名称为<code>&lt;user_name&gt;.github.io</code>，并复制下该仓库的Git URL。</p>
+<p>使用<code>hexo init .</code>创建新的博客目录，修改博客根目录下的_config.yml，将其中的deploy部分修改改为如下格式：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">    <span class="attr">repo:</span> <span class="string">&lt;目标仓库Git</span> <span class="string">URL&gt;</span></span><br><span class="line">    <span class="attr">branch:</span> <span class="string">main</span></span><br></pre></td></tr></table></figure>
+
+<p>安装插件hexo-deployer-git：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置HEXO"><a href="#配置HEXO" class="headerlink" title="配置HEXO"></a>配置HEXO</h2><h3 id="进行站点配置"><a href="#进行站点配置" class="headerlink" title="进行站点配置"></a>进行站点配置</h3><p>配置的是HEXO根目录的<code>_config.yml</code>，以下称其为全局配置文件，将部分键值修改为：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">url:</span> <span class="string">https://nbloger.github.io/</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></span><br><span class="line"></span><br><span class="line"><span class="attr">permalink:</span> <span class="string">:year/:month/:day/:title/</span></span><br><span class="line"></span><br><span class="line"><span class="attr">new_post_name:</span> <span class="string">:year/:month/:day/:title/:title.md</span></span><br><span class="line"></span><br><span class="line"><span class="attr">post_asset_folder:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">marked:</span></span><br><span class="line">  <span class="attr">prependRoot:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">postAsset:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="安装并设置为NEXT主题"><a href="#安装并设置为NEXT主题" class="headerlink" title="安装并设置为NEXT主题"></a>安装并设置为NEXT主题</h3><p>进入<code>theme</code>文件夹，执行<code>git clone https://github.com/next-theme/hexo-theme-next</code>，并将全局配置文件中的<code>theme</code>的值改为<code>next</code>。此时<code>theme/next</code>目录下存在一个<code>_config.yml</code>称为主题配置文件。</p>
+<h3 id="安装并配置站内搜索"><a href="#安装并配置站内搜索" class="headerlink" title="安装并配置站内搜索"></a>安装并配置站内搜索</h3><p>安装插件hexo-generator-searchdb：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-generator-searchdb --save</span><br></pre></td></tr></table></figure>
+
+<p>在全局配置文件添加：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">search:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">search.xml</span></span><br><span class="line">    <span class="attr">field:</span> <span class="string">post</span></span><br><span class="line">    <span class="attr">format:</span> <span class="string">html</span></span><br><span class="line">    <span class="attr">limit:</span> <span class="number">10000</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="添加tags页面"><a href="#添加tags页面" class="headerlink" title="添加tags页面"></a>添加tags页面</h3><p>执行<code>hexo new page tags</code>，将<code>source/tags</code>下的<code>index.md</code>修改如下：</p>
+<p><img src="/2025/02/23/4/image-3.png" alt="alt text"></p>
+<h3 id="添加categories页面"><a href="#添加categories页面" class="headerlink" title="添加categories页面"></a>添加categories页面</h3><p>执行<code>hexo new page categories</code>，将<code>source/categories</code>下的<code>index.md</code>修改如下：</p>
+<p><img src="/2025/02/23/4/image-5.png" alt="alt text"></p>
+<h2 id="配置NEXT主题"><a href="#配置NEXT主题" class="headerlink" title="配置NEXT主题"></a>配置NEXT主题</h2><p>下面如无声明，默认操作主题配置文件。</p>
+<h3 id="设置主题风格"><a href="#设置主题风格" class="headerlink" title="设置主题风格"></a>设置主题风格</h3><p><code>Schemes</code>用于设置风格，默认为<code>Muse</code>，本站使用的是<code>Mist</code>。</p>
+<h3 id="隐藏网页底部的“强力驱动”标识"><a href="#隐藏网页底部的“强力驱动”标识" class="headerlink" title="隐藏网页底部的“强力驱动”标识"></a>隐藏网页底部的“强力驱动”标识</h3><p>修改<code>hemes/next/layout/_partials/footer.swig</code>，在目标段前后分别添加<code>&lt;!--</code>和<code>--&gt;</code>：</p>
+<p><img src="/2025/02/23/4/image.png" alt="alt text"></p>
+<h3 id="显示浏览进度"><a href="#显示浏览进度" class="headerlink" title="显示浏览进度"></a>显示浏览进度</h3><p><code>scrollpercent</code>设为<code>true</code>。</p>
+<h3 id="配置站内搜索"><a href="#配置站内搜索" class="headerlink" title="配置站内搜索"></a>配置站内搜索</h3><p>要求完成<a href="#%E5%AE%89%E8%A3%85%E5%B9%B6%E9%85%8D%E7%BD%AE%E7%AB%99%E5%86%85%E6%90%9C%E7%B4%A2">前置配置</a>。</p>
+<p><code>local_search</code>下的<code>enable</code>设为<code>true</code>。</p>
+<h3 id="设置标签标志从‘-’变为图标"><a href="#设置标签标志从‘-’变为图标" class="headerlink" title="设置标签标志从‘#’变为图标"></a>设置标签标志从‘#’变为图标</h3><p>编辑<code>themes/next/layout/_macro/post.swig</code>，修改为如下：</p>
+<p><img src="/2025/02/23/4/image-1.png" alt="alt text"></p>
+<h3 id="添加代码块复制选项"><a href="#添加代码块复制选项" class="headerlink" title="添加代码块复制选项"></a>添加代码块复制选项</h3><p>将<code>codeblock</code>设置如下：</p>
+<p><img src="/2025/02/23/4/image-2.png" alt="alt text"></p>
+<h3 id="图片点击放大"><a href="#图片点击放大" class="headerlink" title="图片点击放大"></a>图片点击放大</h3><p><code>fancybox</code>设为<code>true</code>。</p>
+<h3 id="添加菜单选项"><a href="#添加菜单选项" class="headerlink" title="添加菜单选项"></a>添加菜单选项</h3><p>将<code>menu</code>修改如下，此前应当完成<a href="#%E6%B7%BB%E5%8A%A0tags%E9%A1%B5%E9%9D%A2">tags</a>和<a href="#%E6%B7%BB%E5%8A%A0categories%E9%A1%B5%E9%9D%A2">categories</a>：</p>
+<p><img src="/2025/02/23/4/image-4.png" alt="alt text"></p>
+<h3 id="设置目录自动展开"><a href="#设置目录自动展开" class="headerlink" title="设置目录自动展开"></a>设置目录自动展开</h3><p>将<code>toc</code>的<code>expand_all</code>设置为<code>true</code></p>
+<h2 id="编写-发布时自动进行文件路径转换"><a href="#编写-发布时自动进行文件路径转换" class="headerlink" title="编写-发布时自动进行文件路径转换"></a>编写-发布时自动进行文件路径转换</h2><p>编写时，如果希望像正常<code>markdown</code>一样采用相对路径预览，这可能在生成时无法正常链接。目前使用执行脚本的方式对站内链接和图片进行处理。</p>
+<p>在<code>scripts</code>文件夹下创建<code>.js</code>文件，内容修改为：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">hexo.<span class="property">extend</span>.<span class="property">filter</span>.<span class="title function_">register</span>(<span class="string">&quot;before_post_render&quot;</span>, <span class="keyword">function</span> (<span class="params">data</span>) &#123;</span><br><span class="line">    data.<span class="property">content</span> = data.<span class="property">content</span>.<span class="title function_">replace</span>(</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">RegExp</span>(<span class="string">&#x27;\\\!\\\[([^\\\]]*)\\\]\\\(&#x27;</span> + data.<span class="property">slug</span> + <span class="string">&#x27;/([^\\\)]*)\\\)&#x27;</span>, <span class="string">&#x27;g&#x27;</span>),</span><br><span class="line">        <span class="string">&#x27;![$1]($2)&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    data.<span class="property">content</span> = data.<span class="property">content</span>.<span class="title function_">replace</span>(</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">RegExp</span>(<span class="string">&#x27;\\\(\\\.\\\./\\\.\\\./\\\.\\\./\\\.\\\.(/\\d&#123;4&#125;/\\d&#123;2&#125;/\\d&#123;2&#125;/[^/]+)/[^\\\.]+\.md\\\)&#x27;</span>, <span class="string">&#x27;g&#x27;</span>),</span><br><span class="line">        <span class="string">&#x27;($1)&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> data;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ol>
+<li><p><a href="https://hexo.io/zh-cn/docs/">Hexo 官方文档</a></p>
+</li>
+<li><p><a href="https://prinsss.github.io/hexo-posts-in-subfolder/">使用子文件夹管理 Hexo 文章且不改变文章永久链接</a></p>
+</li>
+<li><p><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Regular_expressions">正则表达式 - JavaScript | MDN</a></p>
+</li>
+<li><p><a href="https://www.mingdao.me/Hexo/hexo-link-post/">Hexo如何增加站内文章链接</a></p>
+</li>
+<li><p><a href="https://www.cnblogs.com/jinwei26/articles/18460312">hexo next8.20.0 主题美化</a></p>
+</li>
+<li><p><a href="https://www.jianshu.com/p/e17711e44e00">Hexo使用攻略-添加分类及标签</a></p>
+</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>杂项</tag>
+        <tag>环境配置</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Windows 10 + WSL2 设置图像界面</title>
+    <url>/2025/02/23/3/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>WSL2对<code>Wayland</code>的支持较好，但实际测试发现其不支持<code>X11</code>，因此需要安装远程桌面。</p>
+<h2 id="WSL2配置"><a href="#WSL2配置" class="headerlink" title="WSL2配置"></a>WSL2配置</h2><p>在Windows的CMD中使用<code>ipconfig</code>，获得WSL接口的IP地址：</p>
+<p><img src="/2025/02/23/3/image.png" alt="alt text"></p>
+<p>在<code>~/.bashrc</code>中添加：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> DISPLAY=&lt;WSL接口IP&gt;:0</span><br></pre></td></tr></table></figure>
+
+<p>之后执行<code>source ~/.bashrc</code>。</p>
+<h2 id="Windows安装VcXsrv"><a href="#Windows安装VcXsrv" class="headerlink" title="Windows安装VcXsrv"></a>Windows安装VcXsrv</h2><p>访问<a href="https://sourceforge.net/projects/vcxsrv/">VcXsrv</a>下载并安装。之后打开后安装下图使用如下配置运行：</p>
+<p><img src="/2025/02/23/3/image-1.png" alt="alt text"></p>
+<p><img src="/2025/02/23/3/image-2.png" alt="alt text"></p>
+<p><img src="/2025/02/23/3/image-3.png" alt="alt text"></p>
+<p>可以在下述页面保存配置：</p>
+<p><img src="/2025/02/23/3/image-4.png" alt="alt text"></p>
+<p>之后可以在命令行中使用<code>&lt;VcXsrv可执行文件路径&gt; -run &lt;配置文件路径&gt;</code>选项跳过配置过程直接打开VcXsrv，这可以方便的调整快捷方式和设置开机自启。</p>
+<h2 id="Windows防火墙配置"><a href="#Windows防火墙配置" class="headerlink" title="Windows防火墙配置"></a>Windows防火墙配置</h2><p>在Windows安全中心，打开<code>防火墙和网络保护-高级设置</code>：</p>
+<p><img src="/2025/02/23/3/image-5.png" alt="alt text"></p>
+<p>在<code>入站规则</code>中找到<code>VcXsrv windows xserver</code>，允许通过公用网络。</p>
+<p><img src="/2025/02/23/3/image-6.png" alt="alt text"></p>
+<p>之后配置仅WSL能够通过，在WSL中使用<code>ifconfig</code>，记录<code>eth0</code>端口IP。双击<code>VcXsrv windows xserver</code>公用网络条目，添加远程IP地址。</p>
+<p><img src="/2025/02/23/3/image-7.png" alt="alt text"></p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>使用如下命令进行测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install x11-app -y</span><br><span class="line"></span><br><span class="line">xclock</span><br></pre></td></tr></table></figure>
+
+<p>如果打开如下窗口则代表配置成功：</p>
+<p><img src="/2025/02/23/3/image-8.png" alt="alt text"></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ol>
+<li><a href="https://learn.microsoft.com/zh-cn/windows/wsl/tutorials/gui-apps">在适用于 Linux 的 Windows 子系统上运行 Linux GUI 应用</a></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>杂项</tag>
+        <tag>环境配置</tag>
+        <tag>Windows 10</tag>
+      </tags>
+  </entry>
+</search>
