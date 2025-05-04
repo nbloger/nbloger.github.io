@@ -75,6 +75,44 @@
       </tags>
   </entry>
   <entry>
+    <title>Windows 10 + WSL2 设置图像界面</title>
+    <url>/2025/02/23/3/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>WSL2对<code>Wayland</code>的支持较好，但实际测试发现其不支持<code>X11</code>，因此需要安装远程桌面。</p>
+<h2 id="WSL2配置"><a href="#WSL2配置" class="headerlink" title="WSL2配置"></a>WSL2配置</h2><p>在Windows的CMD中使用<code>ipconfig</code>，获得WSL接口的IP地址：</p>
+<p><img src="/2025/02/23/3/image.png" alt="alt text"></p>
+<p>在<code>~/.bashrc</code>中添加：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> DISPLAY=&lt;WSL接口IP&gt;:0</span><br></pre></td></tr></table></figure>
+
+<p>之后执行<code>source ~/.bashrc</code>。</p>
+<h2 id="Windows安装VcXsrv"><a href="#Windows安装VcXsrv" class="headerlink" title="Windows安装VcXsrv"></a>Windows安装VcXsrv</h2><p>访问<a href="https://sourceforge.net/projects/vcxsrv/">VcXsrv</a>下载并安装。之后打开后安装下图使用如下配置运行：</p>
+<p><img src="/2025/02/23/3/image-1.png" alt="alt text"></p>
+<p><img src="/2025/02/23/3/image-2.png" alt="alt text"></p>
+<p><img src="/2025/02/23/3/image-3.png" alt="alt text"></p>
+<p>可以在下述页面保存配置：</p>
+<p><img src="/2025/02/23/3/image-4.png" alt="alt text"></p>
+<p>之后可以在命令行中使用<code>&lt;VcXsrv可执行文件路径&gt; -run &lt;配置文件路径&gt;</code>选项跳过配置过程直接打开VcXsrv，这可以方便的调整快捷方式和设置开机自启。</p>
+<h2 id="Windows防火墙配置"><a href="#Windows防火墙配置" class="headerlink" title="Windows防火墙配置"></a>Windows防火墙配置</h2><p>在Windows安全中心，打开<code>防火墙和网络保护-高级设置</code>：</p>
+<p><img src="/2025/02/23/3/image-5.png" alt="alt text"></p>
+<p>在<code>入站规则</code>中找到<code>VcXsrv windows xserver</code>，允许通过公用网络。</p>
+<p><img src="/2025/02/23/3/image-6.png" alt="alt text"></p>
+<p>之后配置仅WSL能够通过，在WSL中使用<code>ifconfig</code>，记录<code>eth0</code>端口IP。双击<code>VcXsrv windows xserver</code>公用网络条目，添加远程IP地址。</p>
+<p><img src="/2025/02/23/3/image-7.png" alt="alt text"></p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>使用如下命令进行测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install x11-app -y</span><br><span class="line"></span><br><span class="line">xclock</span><br></pre></td></tr></table></figure>
+
+<p>如果打开如下窗口则代表配置成功：</p>
+<p><img src="/2025/02/23/3/image-8.png" alt="alt text"></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ol>
+<li><a href="https://learn.microsoft.com/zh-cn/windows/wsl/tutorials/gui-apps">在适用于 Linux 的 Windows 子系统上运行 Linux GUI 应用</a></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>杂项</tag>
+        <tag>环境配置</tag>
+        <tag>Windows 10</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>WSL2安装并配置HEXO</title>
     <url>/2025/02/23/4/</url>
     <content><![CDATA[<h2 id="安装HEXO并设置Github托管"><a href="#安装HEXO并设置Github托管" class="headerlink" title="安装HEXO并设置Github托管"></a>安装HEXO并设置Github托管</h2><h3 id="安装HEXO"><a href="#安装HEXO" class="headerlink" title="安装HEXO"></a>安装HEXO</h3><p>运行如下命令，运行前请确保能够访问<code>raw.githubusercontent.com</code>，解决方法详见<a href="/2025/02/23/1">这篇博客</a>。</p>
@@ -121,6 +159,18 @@
 <h3 id="添加菜单选项"><a href="#添加菜单选项" class="headerlink" title="添加菜单选项"></a>添加菜单选项</h3><p>将<code>menu</code>修改如下，此前应当完成<a href="#%E6%B7%BB%E5%8A%A0tags%E9%A1%B5%E9%9D%A2">tags</a>和<a href="#%E6%B7%BB%E5%8A%A0categories%E9%A1%B5%E9%9D%A2">categories</a>：</p>
 <p><img src="/2025/02/23/4/image-4.png" alt="alt text"></p>
 <h3 id="设置目录自动展开"><a href="#设置目录自动展开" class="headerlink" title="设置目录自动展开"></a>设置目录自动展开</h3><p>将<code>toc</code>的<code>expand_all</code>设置为<code>true</code></p>
+<h3 id="添加Latex支持"><a href="#添加Latex支持" class="headerlink" title="添加Latex支持"></a>添加Latex支持</h3><p>执行如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-filter-mathjax</span><br><span class="line">hexo clean</span><br></pre></td></tr></table></figure>
+
+<p>修改全局配置文件，添加如下部分：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">mathjax:</span></span><br><span class="line">  <span class="attr">tags:</span> <span class="string">none</span> <span class="comment"># or &#x27;ams&#x27; or &#x27;all&#x27;</span></span><br><span class="line">  <span class="attr">single_dollars:</span> <span class="literal">true</span> <span class="comment"># enable single dollar signs as in-line math delimiters</span></span><br><span class="line">  <span class="attr">cjk_width:</span> <span class="number">0.9</span> <span class="comment"># relative CJK char width</span></span><br><span class="line">  <span class="attr">normal_width:</span> <span class="number">0.6</span> <span class="comment"># relative normal (monospace) width</span></span><br><span class="line">  <span class="attr">append_css:</span> <span class="literal">true</span> <span class="comment"># add CSS to pages rendered by MathJax</span></span><br><span class="line">  <span class="attr">every_page:</span> <span class="literal">false</span> <span class="comment"># if true, every page will be rendered by MathJax regardless the `mathjax` setting in Front-matter</span></span><br></pre></td></tr></table></figure>
+
+<p>修改主题配置文件，对应键值修改为如下：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Math Formulas Render Support</span></span><br><span class="line"><span class="attr">math:</span></span><br><span class="line">  <span class="comment"># Default (true) will load mathjax / katex script on demand.</span></span><br><span class="line">  <span class="comment"># That is it only render those page which has `mathjax: true` in Front-matter.</span></span><br><span class="line">  <span class="comment"># If you set it to false, it will load mathjax / katex srcipt EVERY PAGE.</span></span><br><span class="line">  <span class="attr">per_page:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># hexo-renderer-pandoc (or hexo-renderer-kramed) required for full MathJax support.</span></span><br><span class="line">  <span class="attr">mathjax:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>之后在需要的文章头部添加如下键值即可：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">mathjax:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="编写-发布时自动进行文件路径转换"><a href="#编写-发布时自动进行文件路径转换" class="headerlink" title="编写-发布时自动进行文件路径转换"></a>编写-发布时自动进行文件路径转换</h2><p>编写时，如果希望像正常<code>markdown</code>一样采用相对路径预览，这可能在生成时无法正常链接。目前使用执行脚本的方式对站内链接和图片进行处理。</p>
 <p>在<code>scripts</code>文件夹下创建<code>.js</code>文件，内容修改为：</p>
 <figure class="highlight js"><table><tr><td class="code"><pre><span class="line">hexo.<span class="property">extend</span>.<span class="property">filter</span>.<span class="title function_">register</span>(<span class="string">&quot;before_post_render&quot;</span>, <span class="keyword">function</span> (<span class="params">data</span>) &#123;</span><br><span class="line">    data.<span class="property">content</span> = data.<span class="property">content</span>.<span class="title function_">replace</span>(</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">RegExp</span>(<span class="string">&#x27;\\\!\\\[([^\\\]]*)\\\]\\\(&#x27;</span> + data.<span class="property">slug</span> + <span class="string">&#x27;/([^\\\)]*)\\\)&#x27;</span>, <span class="string">&#x27;g&#x27;</span>),</span><br><span class="line">        <span class="string">&#x27;![$1]($2)&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    data.<span class="property">content</span> = data.<span class="property">content</span>.<span class="title function_">replace</span>(</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">RegExp</span>(<span class="string">&#x27;\\\(\\\.\\\./\\\.\\\./\\\.\\\./\\\.\\\.(/\\d&#123;4&#125;/\\d&#123;2&#125;/\\d&#123;2&#125;/[^/]+)/[^\\\.]+\.md\\\)&#x27;</span>, <span class="string">&#x27;g&#x27;</span>),</span><br><span class="line">        <span class="string">&#x27;($1)&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> data;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
@@ -147,41 +197,32 @@
       </tags>
   </entry>
   <entry>
-    <title>Windows 10 + WSL2 设置图像界面</title>
-    <url>/2025/02/23/3/</url>
-    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>WSL2对<code>Wayland</code>的支持较好，但实际测试发现其不支持<code>X11</code>，因此需要安装远程桌面。</p>
-<h2 id="WSL2配置"><a href="#WSL2配置" class="headerlink" title="WSL2配置"></a>WSL2配置</h2><p>在Windows的CMD中使用<code>ipconfig</code>，获得WSL接口的IP地址：</p>
-<p><img src="/2025/02/23/3/image.png" alt="alt text"></p>
-<p>在<code>~/.bashrc</code>中添加：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> DISPLAY=&lt;WSL接口IP&gt;:0</span><br></pre></td></tr></table></figure>
+    <title>libzmq的内部结构</title>
+    <url>/2025/04/06/0/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>（peek at）（语法结构：while）<br>近期希望查看ZeroMQ实现的人数似乎正在增长，尽管代码库已经有了大量的注释，但仍缺少对架构的概览。这篇文章将帮助新手无障碍地深入理解代码。</p>
+<p>这篇文章将会逐渐的涉及整个代码库，但不会涉及过多的代码细节。随时间推移，代码细节将会而被修改，文档关于这一部分的内容将很快失效。对于代码细节，你应该查看源码而不是查阅该文档。</p>
+<p>（underlying）（transient）（survive）（mutually）（orthogonal）<br>首先，对读者的警告是代码仓库很复杂。不是因为代码行数（当前约10k行）或作为“意面代码”（事实上不是）而复杂，而是为了处理涉及的不同组合而复杂。它需要提供多种选项：操作系统（超过10个操作系统，每个系统还有不同的版本）、微架构（ARM、Itanium等）、编译器（gcc、MSVC、SunStudio等）、编程语言（超过20种编程语言绑定）、底层传输方式（进程内消息传递、可靠多播等）、消息传递模式（远端过程调用、数据分发、并行流水线等）、连接方式（本地连接远程、远程连接本地、两者都可以）、会话生命周期（会话在底层传输中断后仍继续存在或立即关闭等）等等。这些选项将是相互正交的，将产生成千上万种不同的组合。</p>
+<p>上面的叙述表明代码很复杂，尽管其看起来很简单和容易理解。截至目前，该项目投入了大约十人年，平均每行代码花费两小时。因此再修改代码前需要小心并尝试了解目标代码作用和为什么要使用当前方式进行实现。</p>
+<h2 id="全局状态"><a href="#全局状态" class="headerlink" title="全局状态"></a>全局状态</h2><p>在库中使用全部变量是一种搬起石头砸自己脚的行为。看起来这种方式编写的库可以正常工作，但当库被一个目标链接两次后（如图），将会导致各种错误和程序崩溃。</p>
+<p><img src="/2025/04/06/0/image.png" alt="alt text"></p>
+<p>为避免该问题，libzmq没有使用全局变量。作为替代，库的使用者需要创建全局状态。包含全局状态的对象被称为“上下文”。从用户视角看，上下文或多或少的像一个用于套接字的I&#x2F;O线程池；从libzmq的视角看，其仅仅是一个存储全局状态的对象。全局状态包括可用的<code>inproc</code>对端列表、因未发送消息而仍在内存中的已关闭套接字列表等。</p>
+<p>上下文的实现为<code>ctx_t</code>类。</p>
+<h2 id="并发模型"><a href="#并发模型" class="headerlink" title="并发模型"></a>并发模型</h2><p>ZeroMQ的并发模型起初可能有些令人困惑，这是因为我们使用消息传递同时实现并发和内部扩展。因此，尽管ZeroMQ是一个多线程应用，但你无法找到被用于并发同步的锁、条件变量、信号量。相反，每个对象位于其所有者线程中且不会被其他线程操作（因此不需要锁）。其他线程将通过发送消息的方式与该对象进行通信（区别于用户级ZeroMQ消息，这些消息被称为“命令”）。对象也可以通过发送“命令”的方式和其他对象（可能在不同线程中）进行交互。</p>
+<p>从用户视角看，在对象间传递命令很容易，只需要从基类<code>object_t</code>派生出新的对象，然后就可以发送命令和定义命令的处理器。可用的命令在<code>command.hpp</code>文件中定义。假设有命令<code>term</code>，其仅有一个参数<code>linger</code>，当向对象<code>p</code>以参数100传递该命令时，需要的操作如下：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="built_in">send_term</span> (p, <span class="number">100</span>);</span><br></pre></td></tr></table></figure>
 
-<p>之后执行<code>source ~/.bashrc</code>。</p>
-<h2 id="Windows安装VcXsrv"><a href="#Windows安装VcXsrv" class="headerlink" title="Windows安装VcXsrv"></a>Windows安装VcXsrv</h2><p>访问<a href="https://sourceforge.net/projects/vcxsrv/">VcXsrv</a>下载并安装。之后打开后安装下图使用如下配置运行：</p>
-<p><img src="/2025/02/23/3/image-1.png" alt="alt text"></p>
-<p><img src="/2025/02/23/3/image-2.png" alt="alt text"></p>
-<p><img src="/2025/02/23/3/image-3.png" alt="alt text"></p>
-<p>可以在下述页面保存配置：</p>
-<p><img src="/2025/02/23/3/image-4.png" alt="alt text"></p>
-<p>之后可以在命令行中使用<code>&lt;VcXsrv可执行文件路径&gt; -run &lt;配置文件路径&gt;</code>选项跳过配置过程直接打开VcXsrv，这可以方便的调整快捷方式和设置开机自启。</p>
-<h2 id="Windows防火墙配置"><a href="#Windows防火墙配置" class="headerlink" title="Windows防火墙配置"></a>Windows防火墙配置</h2><p>在Windows安全中心，打开<code>防火墙和网络保护-高级设置</code>：</p>
-<p><img src="/2025/02/23/3/image-5.png" alt="alt text"></p>
-<p>在<code>入站规则</code>中找到<code>VcXsrv windows xserver</code>，允许通过公用网络。</p>
-<p><img src="/2025/02/23/3/image-6.png" alt="alt text"></p>
-<p>之后配置仅WSL能够通过，在WSL中使用<code>ifconfig</code>，记录<code>eth0</code>端口IP。双击<code>VcXsrv windows xserver</code>公用网络条目，添加远程IP地址。</p>
-<p><img src="/2025/02/23/3/image-7.png" alt="alt text"></p>
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>使用如下命令进行测试：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install x11-app -y</span><br><span class="line"></span><br><span class="line">xclock</span><br></pre></td></tr></table></figure>
+<p>另一方面，如果要定义<code>term</code>命令的处理器，需要如下操作：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">my_object_t::process_term</span> <span class="params">(<span class="type">int</span> linger)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//  Implement your action here.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>如果打开如下窗口则代表配置成功：</p>
-<p><img src="/2025/02/23/3/image-8.png" alt="alt text"></p>
-<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ol>
-<li><a href="https://learn.microsoft.com/zh-cn/windows/wsl/tutorials/gui-apps">在适用于 Linux 的 Windows 子系统上运行 Linux GUI 应用</a></li>
+<p>注意上述操作只有当目标类派生于<code>object_t</code>时有效。</p>
+<p>对于大多数命令，libzmq保证目标对象在该命令未处理前仍存在（要理解该保证，需查看将异步对象绑定到具有良好层次结构的对象树模型部分），但有几个命令（基本是横跨对象树而不是沿着树枝？）不适用该保证。对这些命令，发送者在发送命令前在目标对象上调用<code>inc_seqnum</code>函数，这将同步的增加存储在目标对象中的计数器（sent_seqnum）。当目标对象处理处理该命令时，其增加另一个计数器（processed_seqnum）。当对象在关闭时，通过判断processed_seqnum是否小于sent_seqnum，对象能知道是否有未处理的命令进而判断是否能够退出。该过程在<code>object_t</code>和<code>own_t</code>类中透明的完成，命令的发送者和接收者只需要发送和接收命令，而不需要关注命令的序列号。</p>
+<h2 id="线程模型"><a href="#线程模型" class="headerlink" title="线程模型"></a>线程模型</h2><h2 id="I-O线程"><a href="#I-O线程" class="headerlink" title="I&#x2F;O线程"></a>I&#x2F;O线程</h2><h2 id="对象树"><a href="#对象树" class="headerlink" title="对象树"></a>对象树</h2><h2 id="回收器线程"><a href="#回收器线程" class="headerlink" title="回收器线程"></a>回收器线程</h2><h2 id="消息"><a href="#消息" class="headerlink" title="消息"></a>消息</h2><h2 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h2><h2 id="消息调度"><a href="#消息调度" class="headerlink" title="消息调度"></a>消息调度</h2><h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ol>
+<li><a href="http://wiki.zeromq.org/whitepapers:architecture">Internal Architecture of libzmq</a></li>
 </ol>
 ]]></content>
       <tags>
-        <tag>杂项</tag>
-        <tag>环境配置</tag>
-        <tag>Windows 10</tag>
+        <tag>英语博客翻译</tag>
+        <tag>ZeroMQ</tag>
       </tags>
   </entry>
 </search>
