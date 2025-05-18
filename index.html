@@ -235,7 +235,7 @@
 </li>
 </ol>
 <h2 id="数据格式"><a href="#数据格式" class="headerlink" title="数据格式"></a>数据格式</h2><p>原则上，SOME&#x2F;IP 通信由基于 IP 的在设备或发布者间传输的消息组成。其中每个消息如下图所示：</p>
-<p><img src="/2025/02/23/0/image.png" alt="alt text"></p>
+<p><img src="/2025/05/10/0/image.png" alt="alt text"></p>
 <p>这里有两个设备（设备A和设备B）；设备A发送一个消息到设备B并获得一个回复消息。底层的传输协议可以是TCP或UDP；但协议的选择不会对消息产生任何影响。假设这样一种场景，在设备 B 上运行着一个服务，该服务提供一个函数，设备 A 通过消息调用该函数并从返回的消息中获得结果。</p>
 <p>SOME&#x2F;IP 消息由两部分组成：头部和负荷。上图中可以看出头部主要由以下标识组成：</p>
 <ul>
@@ -318,14 +318,14 @@
 <p>综上所述，底层传输协议可以是UDP或TCP。使用UDP时 SOME&#x2F;IP 消息不能分片；在一个UDP包中允许有多个消息但一个消息不能大于UDP包限制（大于1400字节）（译者注：即UDP包不因大于链路限制导致分片）。更大的消息必须使用TCP传输，此时TCP的全部可靠传输性质将得到应用。如果TCP流发生同步错误，SOME&#x2F;IP 规范允许使用魔法 cookie 以发现下一条消息的起点（译者注：应该指断点续传）。</p>
 <p>注意，服务的接口必须被实现，并且因为对同一个服务接口可能存在多个实例，必须使用额外的标识符进行实例定义（实例标识，instance ID）。然而实例标识不作为 SOME&#x2F;IP 消息头的一部分，而是通过传输层协议的端口号进行定义；因此不能在同一个端口上为同一个接口提供多个实例。</p>
 <p>下图将展示 SOME&#x2F;IP 的基本通信模式：</p>
-<p><img src="/2025/02/23/0/image-1.png" alt="alt text"></p>
+<p><img src="/2025/05/10/0/image-1.png" alt="alt text"></p>
 <p>除了用于远端过程调用的 request&#x2F;response 机制外，还存在用于事件的 publish&#x2F;subscribe 机制。注意，SOME&#x2F;IP 协议中事件总是分组到不同事件组中，因此只能订阅事件组，而不能定义事件本身。SOME&#x2F;IP 规范中也定义了“域”，在该场景中 setter&#x2F;getter 方法总是基于 request&#x2F;response 模式，并且使用事件机制分发改变消息。订阅本身是通过 SOME&#x2F;IP 服务发现机制实现。</p>
 <h2 id="服务发现"><a href="#服务发现" class="headerlink" title="服务发现"></a>服务发现</h2><p>SOME&#x2F;IP 服务发现用于本地服务实例和发现那些已经运行且实现了 publish&#x2F;subscribe 执行器的服务实例。其主要通过提供消息实现；这意味着每个设备将广播（多播）包含所有该设备提供的服务的消息。SOME&#x2F;IP 服务发现消息通过 UDP 发送，当客户端应用需要服务但未被提供时，则可以发送“查找消息”。其他 SOME&#x2F;IP 服务发现消息用于发布&#x2F;订阅事件组。</p>
 <p>下图展示了 SOME&#x2F;IP 服务发现消息的典型结构。</p>
-<p><img src="/2025/02/23/0/image-2.png" alt="alt text"></p>
+<p><img src="/2025/05/10/0/image-2.png" alt="alt text"></p>
 <p>这些应该足够作为开始，更多细节将在接下来的示例中讨论，或阅读对应的规范。</p>
 <h2 id="vsomeip-简介"><a href="#vsomeip-简介" class="headerlink" title="vsomeip 简介"></a>vsomeip 简介</h2><p>在开始实现入门示例前，先简要介绍由 COVIESA 实现的被称为 vsomeip 的 SOME&#x2F;IP 实现的基本结构。</p>
-<p><img src="/2025/02/23/0/image-3.png" alt="alt text"></p>
+<p><img src="/2025/05/10/0/image-3.png" alt="alt text"></p>
 <p>上图覆盖了设备间 SOME&#x2F;IP 通信（外部通信）和内部的进程间通信。设备间通过同行端点进行通信，这些端点定义使用的传输层协议（TCP或UDP）和其他参数（端点号或其他参数）。所有参数能使用 vsomeip 配置文件（json文件，详见 vsomeip 指导手册）进行设置。内部通信通过使用 Boost.Asio 库基于 UNIX 域套接字（UNIX domain socket）实现的本地端点进行。由于内部通信不需要通过核心组件（例如 D-Bus 守护进行）进行路由，因此其非常快。</p>
 <p>vsomeip 核心路由管理器只会接收到那些需要发送到外部设备的消息并将来自外部的消息进行分发。每个设备只有一个路由管理器；如果没有额外配置，将会由第一个运行的 vsomeip 应用启动路由管理器。</p>
 <blockquote>
